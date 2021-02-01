@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
-import RNRestart from 'react-native-restart'
+import { View, Text, StyleSheet, ImageBackground,I18nManager } from 'react-native';
+import RNRestart from 'react-native-restart';
+
 //3rd party packages
 import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 import { Picker, Image } from 'react-native-ui-lib';
@@ -73,14 +74,22 @@ const App = () => {
     getCovidCases(selectedCountry.value)
   }
 
-  const onChangeLng = (lng) => {
+  const onChangeLng = async (lng) => {
     if (lng === 'en') {
+      await I18nManager.forceRTL(false)
       setLng('en')
       RNRestart.Restart()
       return;
     }
     if (lng === 'hi') {
+      await I18nManager.forceRTL(false)
       setLng('hi')
+      RNRestart.Restart()
+      return;
+    }
+    if (lng === 'ar') {
+      await I18nManager.forceRTL(true)
+      setLng('ar')
       RNRestart.Restart()
       return;
     }
@@ -109,6 +118,13 @@ const App = () => {
             bgColor={colors.bgGreenColor}
             textColor={colors.greenColor}
           />
+
+          <BtnComp
+            btnText={'For Arabic'}
+            onPress={() => onChangeLng('ar')}
+            bgColor={colors.bgGrayColor}
+            textColor={colors.grayColor}
+          />
         </View>
 
         <View style={styles.flexView}>
@@ -121,6 +137,7 @@ const App = () => {
               showSearch
               placheholderTextColor='gray'
               containerStyle={styles.pickerStyle}
+              style={{ textAlign: "left" }}
             >
               {allCountries.map((option, index) => (
                 <Picker.Item key={index} value={option.name} label={option.name} />
@@ -152,9 +169,13 @@ const App = () => {
         </View>
 
         <Text style={styles.conronTextStyle}>{strings.CORONAVIRUS}</Text>
+
         <Image
           source={imagePath.symptomsIcon}
+          style={{ height: 200 }}
+          resizeMode="stretch"
         />
+
       </View>
     </View>
   );
@@ -167,12 +188,14 @@ const styles = StyleSheet.create({
   },
   updateText: {
     fontSize: moderateScale(20),
-    fontFamily: fontFamily.medium
+    fontFamily: fontFamily.medium,
+    textAlign: 'left'
   },
   newestText: {
     fontSize: moderateScale(12),
     fontFamily: fontFamily.regular,
-    marginTop: moderateVerticalScale(4)
+    marginTop: moderateVerticalScale(4),
+    textAlign: 'left'
   },
   pickerStyle: {
     flexDirection: 'row',
@@ -182,7 +205,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     padding: moderateScale(6),
-    height: moderateScale(48)
+    height: moderateScale(48),
+
+
   },
   flexView: {
     flexDirection: "row",
